@@ -4,20 +4,26 @@
 
 #include "unnamed.h"
 #include "candles.h"
-#include "utils.h"
 #include "result.h"
+#include "utils.h"
 
 #define SPREAD 0.5
-#define TAKE_PROFIT 20
-#define STOP_LOSS 20
+#define TAKE_PROFIT 10
+#define STOP_LOSS 10
 
 Result result[8192] = {0};
 size_t result_size = 0;
 
+double total_pts = 0;
+
 void unnamed(Candle *cs, size_t candles_size) {
     for (size_t i = 1; i < candles_size; ++i) {
-        double SMA = cs[i - 1].indicators.SMA;
-        double EMA = cs[i - 1].indicators.EMA;
+        Datetime current_datetime = cs[i].timestamp;
+        Datetime previous_datetime = cs[i - 1].timestamp;
+
+        if (!is_same_day(current_datetime, previous_datetime)) {
+            continue;
+        }
 
         int ctd_i = 0;
         double entry_price = 0;
@@ -27,10 +33,12 @@ void unnamed(Candle *cs, size_t candles_size) {
         int Can = 0;
         int Hit = 0;
 
-        if (SMA - EMA > 0) {
-            entry_price = cs[i - 1].high + SPREAD;
+        int condition = 1;
+
+        if (condition) {
+            entry_price = cs[i - 1].low - SPREAD;
             for (size_t g = 0; g < cs[i].ctd_size; ++g) {
-                if (cs[i].ctd[g].price > entry_price) {
+                if (cs[i].ctd[g].price < entry_price) {
                     ctd_i = cs[i].ctd[g].i;
                     result[result_size].Exact_Entry_Time = cs[i].ctd[g].timestamp;
                     Can = 1;
@@ -54,6 +62,7 @@ void unnamed(Candle *cs, size_t candles_size) {
                         result[result_size].Pts = (result[result_size].Dir == 'C' ? cs[c].close - entry_price : entry_price - cs[c].close);
                         strcpy(result[result_size].Result, (result[result_size].Pts > 0 ? "TP" : "SL"));
                         result[result_size].Exit_Time = cs[c].timestamp;
+                        total_pts += result[result_size].Pts;
                         break;
                     }
                     for (size_t n = (c == i ? ctd_i : 0); n < cs[c].ctd_size; ++n) {
@@ -61,12 +70,14 @@ void unnamed(Candle *cs, size_t candles_size) {
                             strcpy(result[result_size].Result, "TP");
                             result[result_size].Exit_Time = cs[c].ctd[n].timestamp;
                             result[result_size].Pts = TAKE_PROFIT;
+                            total_pts += result[result_size].Pts;
                             Hit = 1;
                             break;
                         } else if (cs[c].ctd[n].price < stop_loss) {
                             strcpy(result[result_size].Result, "SL");
                             result[result_size].Exit_Time = cs[c].ctd[n].timestamp;
                             result[result_size].Pts = STOP_LOSS * -1;
+                            total_pts += result[result_size].Pts;
                             Hit = 1;
                             break;
                         }
@@ -79,4 +90,5 @@ void unnamed(Candle *cs, size_t candles_size) {
             }
         }
     }
+    printf("Total_Pts=[%lf]\n", total_pts);
 }

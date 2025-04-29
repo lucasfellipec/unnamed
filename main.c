@@ -10,6 +10,7 @@
 #define CANDLES_MAX_SIZE 1000000
 
 const char *folders[] = {
+    "/home/rabbithole/projects/streamlabs/bases/2024.12",
     "/home/rabbithole/projects/streamlabs/bases/2025.01"
 };
 
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
     size_t files_size = 0;
     char **files = get_csv_files(folders, folders_size, &files_size);
 
-    for (size_t i = 0; i < 1; ++i) {
+    for (size_t i = 0; i < files_size; ++i) {
         size_t times_and_trades_size = 0;
         size_t cs_size = 0;
 
