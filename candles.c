@@ -37,6 +37,7 @@ Candle *generate_candles(size_t *cs_size, Times_And_Trades *data, size_t rows, i
                     cs[j].ctd[g].price = data[i - count + g].price;
                     cs[j].ctd[g].i = g;
                 }
+                cs[j].ctd_size = count;
                 ++j;
             }
             current_interval_start = interval_start;
@@ -74,6 +75,8 @@ Candle *generate_candles(size_t *cs_size, Times_And_Trades *data, size_t rows, i
             cs[j].ctd[g].price = data[rows - count + g].price;
             cs[j].ctd[g].i = g;
         }
+        cs[j].ctd_size = count;
+        cs[j].is_last_candle = 1;
         ++j;
     }
 

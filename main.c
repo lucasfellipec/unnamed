@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "result.h"
 #include "times_and_trades.h"
 #include "utils.h"
 #include "candles.h"
@@ -11,6 +12,9 @@
 const char *folders[] = {
     "/home/rabbithole/projects/streamlabs/bases/2025.01"
 };
+
+extern Result result[8192];
+extern size_t result_size;
 
 int main(int argc, char *argv[]) {
     Candle *candles = malloc(CANDLES_MAX_SIZE * sizeof(Candle));
@@ -35,9 +39,6 @@ int main(int argc, char *argv[]) {
             candles[candles_size++] = cs[c];
         }
 
-        for (size_t c = 0; c < cs_size; ++c) {
-            free(cs[c].ctd);
-        }
         free(cs);
         free(times_and_trades);
     }
@@ -47,8 +48,11 @@ int main(int argc, char *argv[]) {
 
     unnamed(candles, candles_size); // Strategy
 
-    display_candles(candles, candles_size);
+    display_strategy_result(result, result_size);
 
+    for (size_t c = 0; c < candles_size; ++c) {
+        free(candles[c].ctd);
+    }
     free(candles);
 
     for (size_t i = 0; i < files_size; ++i) {

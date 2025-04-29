@@ -26,10 +26,12 @@ typedef struct {
     double low;
     double close;
     double real_volume;
+    int is_last_candle;
     Color color;
 
     Indicators indicators;
     Candle_Times_And_Trades_Data *ctd;
+    size_t ctd_size;
 } Candle;
 
 extern Candle *generate_candles(size_t *cs_size, Times_And_Trades *data, size_t rows, int timeframe);
