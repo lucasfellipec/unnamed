@@ -35,9 +35,11 @@ int main(int argc, char *argv[]) {
             candles[candles_size++] = cs[c];
         }
 
+        for (size_t c = 0; c < cs_size; ++c) {
+            free(cs[c].ctd);
+        }
         free(cs);
         free(times_and_trades);
-        free(files[i]);
     }
 
     calculate_SMA(candles, candles_size, SMA_period);
@@ -45,7 +47,13 @@ int main(int argc, char *argv[]) {
 
     unnamed(candles, candles_size); // Strategy
 
+    display_candles(candles, candles_size);
+
     free(candles);
+
+    for (size_t i = 0; i < files_size; ++i) {
+        free(files[i]);
+    }
     free(files);
 
     return 0;

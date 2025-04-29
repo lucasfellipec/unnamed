@@ -62,7 +62,9 @@ char **get_csv_files(const char **folders, size_t size, size_t *files_size) {
             if (is_csv_file(entry->d_name) && files_count < MAX_FILES) {
                 char path[512];
                 snprintf(path, sizeof(path), "%s/%s", folder_path, entry->d_name);
-                files[files_count] = strdup(path);
+                size_t path_len = strlen(path) + 1;
+                files[files_count] = malloc(path_len * sizeof(char));
+                strcpy(files[files_count], path);
                 ++files_count;
             }
         }

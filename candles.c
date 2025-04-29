@@ -13,7 +13,6 @@ Candle *generate_candles(size_t *cs_size, Times_And_Trades *data, size_t rows, i
     int low = (int)1e9;
     int close = 0;
     double real_volume_sum = 0;
-    Color color;
     size_t j = 0;
 
     Candle *cs = malloc(CANDLES_SIZE * sizeof(Candle));
@@ -29,8 +28,15 @@ Candle *generate_candles(size_t *cs_size, Times_And_Trades *data, size_t rows, i
                 cs[j].low = (float)low/10.0;
                 cs[j].close = (float)close/10.0;
                 cs[j].real_volume = real_volume_sum;
-                color = (open > close ? RED : open < close ? GREEN : DOJI);
-                cs[j].color = color;
+                cs[j].color = (open > close ? RED : open < close ? GREEN : DOJI);
+                cs[j].indicators.EMA = 0;
+                cs[j].indicators.SMA = 0;
+                cs[j].ctd = malloc(count * sizeof(Candle_Times_And_Trades_Data));
+                for (int g = 0; g < count; ++g) {
+                    cs[j].ctd[g].timestamp = data[i - count + g].timestamp;
+                    cs[j].ctd[g].price = data[i - count + g].price;
+                    cs[j].ctd[g].i = g;
+                }
                 ++j;
             }
             current_interval_start = interval_start;
@@ -59,8 +65,15 @@ Candle *generate_candles(size_t *cs_size, Times_And_Trades *data, size_t rows, i
         cs[j].low = (float)low/10.0;
         cs[j].close = (float)close/10.0;
         cs[j].real_volume = real_volume_sum;
-        color = (open > close ? RED : open < close ? GREEN : DOJI);
-        cs[j].color = color;
+        cs[j].color = (open > close ? RED : open < close ? GREEN : DOJI);
+        cs[j].indicators.EMA = 0;
+        cs[j].indicators.SMA = 0;
+        cs[j].ctd = malloc(count * sizeof(Candle_Times_And_Trades_Data));
+        for (int g = 0; g < count; ++g) {
+            cs[j].ctd[g].timestamp = data[rows - count + g].timestamp;
+            cs[j].ctd[g].price = data[rows - count + g].price;
+            cs[j].ctd[g].i = g;
+        }
         ++j;
     }
 

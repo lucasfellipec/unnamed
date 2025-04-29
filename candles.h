@@ -15,6 +15,12 @@ typedef enum {
 
 typedef struct {
     Datetime timestamp;
+    double price;
+    int i;
+} Candle_Times_And_Trades_Data;
+
+typedef struct {
+    Datetime timestamp;
     double open;
     double high;
     double low;
@@ -23,6 +29,7 @@ typedef struct {
     Color color;
 
     Indicators indicators;
+    Candle_Times_And_Trades_Data *ctd;
 } Candle;
 
 extern Candle *generate_candles(size_t *cs_size, Times_And_Trades *data, size_t rows, int timeframe);
