@@ -1,0 +1,5 @@
+timeframe=$1
+SMA_period=$2
+EMA_period=$3
+
+cc -O3 -march=native -Wall main.c unnamed.c candles.c utils.c times_and_trades.c result.c -o bin/main && bin/main ${timeframe} ${SMA_period} ${EMA_period}
